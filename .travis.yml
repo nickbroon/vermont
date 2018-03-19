@@ -2,7 +2,21 @@ language: cpp
 cache: ccache
 sudo: false
 
+env:
+  global:
+  # The next declaration is the encrypted COVERITY_SCAN_TOKEN, created
+  #   via the "travis encrypt" command using the project repo's public key
+  - secure: "VqjIREabPPZyQ3E78WaumhSBy1iWbSeDeABkv0GU3vhXTFSH39PlJPCKhvhmPhXmkvzgN2ZF/IZ8egNbrvUmTrltVWo0xb76ZRlxLxABbEaoOvTCJM7UIbEWnHqwhGxbt4cWCXD+AfSsCsgMOJm6EETqpiupegOyInNtr2ZhPZkd+z3K3XW3PEe5VQOHKIzBNxvpj/4XBPUz0BiguhWDuMc2zBoCCza9Ux25aEjgg7DMobUiyHZIOyAnS4Y1DtVo6GpXhE6kiMS5S8r7PQA3SBeWdyU7hAenYu6UcuIX6NwoQ77o6fWmDPFl/GtCcroLZjG/xlF18j4y495zVp8+WRxPl65X3dMFs7IGCOdzn5qwNg+7MYXky5DG0vO8taouZriY8H9eXH50y3S6P6UemeRFng8RLGIaL+2vzKCBDyWBKcIc1h5EPl8+MXsVD5tpov0xqwwDlD/+gvYHvsirrqHuaK1udRnu/D4O1N+GAYuEaTt6SGgpkhixTq86SPqwK4J/gGtpQ4i1hZRUgyBSVNqWXEfYGJ6SxcpMp8WjGn9Fuze+WyYdJJkppEVJ7LdLFjv71HMvctU5yC7kF7kha0mQLHVJDX9ETPrWAVBuscKYjMxtfn1+2foXerKMen5tY6CfavI68NDdKwaRbmrmJqzDbfh3PP4JQ3eFIMgdeac="
+
 addons:
+  coverity_scan:
+    project:
+      name: "nickbroon/vermont"
+      description: "IPFIX Flow Monitoring framework"
+    notification_email: nickbroon@gmail.com
+    build_command_prepend: "cmake -DCMAKE_BUILD_TYPE=Debug"
+    build_command: "make"
+    branch_pattern: coverity_scan
   apt:
     sources: &zeromq_source
       - sourceline: 'deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/xUbuntu_14.04/ ./'
