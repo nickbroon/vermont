@@ -9,6 +9,14 @@ env:
   - secure: "TeCvKNvV4eowHQ/yl4n7uzYBHSknuASlctf706pcoJsxmXe75qiyi67GnC8Vuyb/q1mzARCL/RwYXshkIfOCV1I2hiYOt/ImvUsL/ATCWE0foBdla+BCbUj0RsTthvD4roQr+fIdvLLQ6wiQEam62MfCGv9NApNCmh8W/EYOLHZOTTmQ0K0DcCTK0cPa8qyGfT5YYj41RMVNNYScjvOQ9sFM9tFpS4qW3RWiH2IOWfZJ0g1s7SG0zpSzosYeBChD7jpfaunxw+btuGbsSlb8QMAR3qE3E2HNaOph4qTasCS2r54Fu/LUTmSGPR/5Tyx7p7j6tss84gI5dWx/3SbZqPpWkLsyIrhQ+lNgYVq0I46Kj5TBSpuE4Ac1QJ4Yh4rLzy7H7YHWUgXh63dlUM0UOhnhog49Z8Uy8RkP0e/fjdjqUkojFkWePfE2irlXwRzut6epCBaO23sB4nu7xz7FQmT6CJCot8Z16Y3UEAOh1sdBsfQ1dCNCvw1B6e+B3u8E0zu070Ie+N5Zjkzv0mdi5YpB171hYf+d/URHURQJXDZGRJs2h3OqCwbJ5FncqhH/fCAGJ8lVdNxnH/JGAbSrB9gdpu6FtJYQTItdIBBx6WxS6inTgB+DtgFXk4m4+o/iYt4rGrtp+DA2UR2/X1YbTBwGxMBmKI5QaWPENKNMqDc="
 
 addons:
+  coverity_scan:
+    project:
+      name: "nickbroon/vermont"
+      description: "IPFIX Flow Monitoring framework"
+    notification_email: nickbroon@gmail.com
+    build_command_prepend: "cmake -DCMAKE_BUILD_TYPE=Debug"
+    build_command: "make"
+    branch_pattern: coverity_scan
   apt:
     sources: &zeromq_source
       - sourceline: 'deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/xUbuntu_14.04/ ./'
@@ -86,14 +94,6 @@ matrix:
           packages:
             - *required_packages
             - *optional_packages
-          coverity_scan:
-            project:
-              name: "nickbroon/vermont"
-              description: "IPFIX Flow Monitoring framework"
-            notification_email: nickbroon@gmail.com
-            build_command_prepend: "cmake -DCMAKE_BUILD_TYPE=Debug"
-            build_command: "make"
-            branch_pattern: coverity_scan
     - compiler: gcc-5
       env:
         - DTLS="ON" ZMQ="ON" BUILD_TYPE="RelWithDebInfo" MATRIX_EVAL="CC=gcc-5 CXX=g++-5"
@@ -176,9 +176,11 @@ matrix:
             
 before_install:
   - eval "${MATRIX_EVAL}"
+  # When building the coverity_scan branch, allow only the first job to continue to avoid travis-ci/travis-ci#1975.
+  - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" && "${TRAVIS_JOB_NUMBER}" =~ \.1$ ]]; then exit 0; fi
 
 script:
-  - if [[ "${COVERITY_SCAN_BRANCH}" == 1 ]];
+  - if [[ "${TRAVIS_BRANCH}" == "coverity_scan" ]];
       then
         echo "Don't build on coverty_scan branch.";
         exit 0;
