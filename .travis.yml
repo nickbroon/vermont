@@ -8,9 +8,6 @@ env:
   #   via the "travis encrypt" command using the project repo's public key
   - secure: "TeCvKNvV4eowHQ/yl4n7uzYBHSknuASlctf706pcoJsxmXe75qiyi67GnC8Vuyb/q1mzARCL/RwYXshkIfOCV1I2hiYOt/ImvUsL/ATCWE0foBdla+BCbUj0RsTthvD4roQr+fIdvLLQ6wiQEam62MfCGv9NApNCmh8W/EYOLHZOTTmQ0K0DcCTK0cPa8qyGfT5YYj41RMVNNYScjvOQ9sFM9tFpS4qW3RWiH2IOWfZJ0g1s7SG0zpSzosYeBChD7jpfaunxw+btuGbsSlb8QMAR3qE3E2HNaOph4qTasCS2r54Fu/LUTmSGPR/5Tyx7p7j6tss84gI5dWx/3SbZqPpWkLsyIrhQ+lNgYVq0I46Kj5TBSpuE4Ac1QJ4Yh4rLzy7H7YHWUgXh63dlUM0UOhnhog49Z8Uy8RkP0e/fjdjqUkojFkWePfE2irlXwRzut6epCBaO23sB4nu7xz7FQmT6CJCot8Z16Y3UEAOh1sdBsfQ1dCNCvw1B6e+B3u8E0zu070Ie+N5Zjkzv0mdi5YpB171hYf+d/URHURQJXDZGRJs2h3OqCwbJ5FncqhH/fCAGJ8lVdNxnH/JGAbSrB9gdpu6FtJYQTItdIBBx6WxS6inTgB+DtgFXk4m4+o/iYt4rGrtp+DA2UR2/X1YbTBwGxMBmKI5QaWPENKNMqDc="
 
-before_install:
-  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
-
 addons:
   apt:
     sources: &zeromq_source
@@ -179,6 +176,7 @@ matrix:
             
 before_install:
   - eval "${MATRIX_EVAL}"
+  - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 script:
   - 'if [ ${COVERITY_SCAN_BRANCH} != 1 ]; then
