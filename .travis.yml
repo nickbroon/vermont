@@ -12,14 +12,6 @@ before_install:
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 addons:
-  coverity_scan:
-    project:
-      name: "nickbroon/vermont"
-      description: "IPFIX Flow Monitoring framework"
-    notification_email: nickbroon@gmail.com
-    build_command_prepend: "cmake -DCMAKE_BUILD_TYPE=Debug"
-    build_command: "make"
-    branch_pattern: coverity_scan
   apt:
     sources: &zeromq_source
       - sourceline: 'deb http://download.opensuse.org/repositories/network:/messaging:/zeromq:/release-stable/xUbuntu_14.04/ ./'
@@ -97,6 +89,14 @@ matrix:
           packages:
             - *required_packages
             - *optional_packages
+          coverity_scan:
+            project:
+              name: "nickbroon/vermont"
+              description: "IPFIX Flow Monitoring framework"
+            notification_email: nickbroon@gmail.com
+            build_command_prepend: "cmake -DCMAKE_BUILD_TYPE=Debug"
+            build_command: "make"
+            branch_pattern: coverity_scan
     - compiler: gcc-5
       env:
         - DTLS="ON" ZMQ="ON" BUILD_TYPE="RelWithDebInfo" MATRIX_EVAL="CC=gcc-5 CXX=g++-5"
