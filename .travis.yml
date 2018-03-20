@@ -179,6 +179,5 @@ before_install:
   - echo -n | openssl s_client -connect https://scan.coverity.com:443 | sed -ne '/-BEGIN CERTIFICATE-/,/-END CERTIFICATE-/p' | sudo tee -a /etc/ssl/certs/ca-
 
 script:
-  - 'if [ ${COVERITY_SCAN_BRANCH} != 1 ]; then
-        cmake -DCMAKE_INSTALL_PREFIX=/tmp -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DSUPPORT_JOURNALD=ON -DSUPPORT_DTLS="$DTLS" -DSUPPORT_ZMQ="$ZMQ" . && make -k && make test && make install;
-     fi'
+  - test "${COVERITY_SCAN_BRANCH}" != "1" || exit 0
+  - cmake -DCMAKE_INSTALL_PREFIX=/tmp -DCMAKE_BUILD_TYPE="$BUILD_TYPE" -DSUPPORT_JOURNALD=ON -DSUPPORT_DTLS="$DTLS" -DSUPPORT_ZMQ="$ZMQ" . && make -k && make test && make install
