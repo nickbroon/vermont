@@ -141,10 +141,6 @@ Rule::Field* AggregatorBaseCfg::readNonFlowKeyRule(XMLElement* e)
 	ruleField->semantic = ie.getSemantic();
 	ruleField->fieldIe = ie.getFieldIe();
 
-	if (!BaseHashtable::isToBeAggregated(ruleField->type)) {
-		msg(LOG_ERR, "Field %s configured as nonFlowKey will not be aggregated", ie.getIeName().c_str());
-	}
-
 	if (ie.getAutoAddV4PrefixLength() &&
 			(ruleField->type == InformationElement::IeInfo(IPFIX_TYPEID_sourceIPv4Address, 0) ||
 			ruleField->type == InformationElement::IeInfo(IPFIX_TYPEID_destinationIPv4Address, 0))) {
@@ -182,10 +178,6 @@ Rule::Field* AggregatorBaseCfg::readFlowKeyRule(XMLElement* e) {
 		ruleField->type.id = ie.getIeId();
 		ruleField->type.enterprise = ie.getEnterpriseNumber();
 		ruleField->type.length = ie.getIeLength();
-
-		if (BaseHashtable::isToBeAggregated(ruleField->type)) {
-			msg(LOG_ERR, "Field %s configured as FlowKey will be aggregated", ie.getIeName().c_str());
-		}
 
 		if (ie.getAutoAddV4PrefixLength() &&
 				(ruleField->type.id == IPFIX_TYPEID_sourceIPv4Address || ruleField->type.id == IPFIX_TYPEID_destinationIPv4Address)) {

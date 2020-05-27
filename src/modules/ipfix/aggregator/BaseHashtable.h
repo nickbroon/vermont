@@ -92,8 +92,6 @@ public:
 	 */
 	void postReconfiguration();
 
-	static int isToBeAggregated(InformationElement::IeInfo& type);
-
 protected:
 	/**
 	 * contains needed data elements when FPA or DPA is performed for PacketHashtable

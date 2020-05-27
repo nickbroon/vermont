@@ -49,7 +49,7 @@ FlowHashtable::~FlowHashtable()
 
 /**
  * Adds (or otherwise aggregates) @c deltaData to @c baseData
- * @returns 0 if successful, else 1 (when no aggregation mechanism was found)
+ * @returns 0 if successful, else 1
  */
 int FlowHashtable::aggregateField(TemplateInfo::FieldInfo* basefi, TemplateInfo::FieldInfo* deltafi, IpfixRecord::Data* base,
 								  IpfixRecord::Data* delta) {
@@ -261,8 +261,8 @@ int FlowHashtable::aggregateField(TemplateInfo::FieldInfo* basefi, TemplateInfo:
 			}
 			break;
 	}
-	DPRINTF_INFO("non-aggregatable type: %s", type->toString().c_str());
-	return 1;
+	DPRINTF_INFO("default aggregation for type: %s", type->toString().c_str());
+	return 0;
 }
 
 /**
@@ -315,7 +315,7 @@ int FlowHashtable::aggregateFlow(IpfixRecord::Data* baseFlow, IpfixRecord::Data*
 	for (i = 0; i < dataTemplate->fieldCount; i++) {
 		TemplateInfo::FieldInfo* fi = &dataTemplate->fieldInfo[i];
 
-		if(!isToBeAggregated(fi->type)) {
+		if(fieldModifier[i] != Rule::Field::AGGREGATE) {
 			continue;
 		}
 		if (reverse && fi->type.enterprise == 0) {
@@ -358,7 +358,7 @@ uint32_t FlowHashtable::getHash(IpfixRecord::Data* data, bool reverse) {
 
 	uint32_t hash = 0;
 	for (i = 0; i < dataTemplate->fieldCount; i++) {
-		if(isToBeAggregated(dataTemplate->fieldInfo[i].type)) {
+		if(fieldModifier[i] == Rule::Field::AGGREGATE) {
 			continue;
 		}
 		uint32_t idx = (reverse ? revKeyMapper[i] : i);
@@ -404,7 +404,7 @@ int FlowHashtable::equalFlow(IpfixRecord::Data* flow1, IpfixRecord::Data* flow2,
 	for(i = 0; i < dataTemplate->fieldCount; i++) {
 		TemplateInfo::FieldInfo* fi = &dataTemplate->fieldInfo[i];
 
-		if(isToBeAggregated(fi->type)) {
+		if (fieldModifier[i] == Rule::Field::AGGREGATE) {
 			continue;
 		}
 

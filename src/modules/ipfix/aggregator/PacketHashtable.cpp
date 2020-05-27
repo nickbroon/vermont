@@ -943,7 +943,7 @@ void PacketHashtable::buildExpHelperTable()
 		if (!typeAvailable(hfi->type)) {
 			THROWEXCEPTION("Type %s is not contained in raw packet. Please remove it from PacketAggregator rule.", hfi->type.toString().c_str());
 		}
-		if (!isToBeAggregated(hfi->type)) continue;
+		if (fieldModifier[i] != Rule::Field::AGGREGATE) continue;
 		DPRINTF_INFO("including type %s.", hfi->type.toString().c_str());
 		ExpFieldData* efd = &expHelperTable.aggFields[expHelperTable.noAggFields++];
 		fillExpFieldData(efd, hfi, fieldModifier[i], expHelperTable.noAggFields-1);
@@ -958,7 +958,7 @@ void PacketHashtable::buildExpHelperTable()
 	expHelperTable.noKeyFields = 0;
 	for (int i=0; i<dataTemplate->fieldCount; i++) {
 		TemplateInfo::FieldInfo* hfi = &dataTemplate->fieldInfo[i];
-		if (isToBeAggregated(hfi->type)) continue;
+		if (fieldModifier[i] == Rule::Field::AGGREGATE) continue;
 		ExpFieldData* efd = &expHelperTable.keyFields[expHelperTable.noKeyFields++];
 		fillExpFieldData(efd, hfi, fieldModifier[i], expHelperTable.noKeyFields-1);
 		expkey2field.push_back(i);
@@ -985,7 +985,7 @@ void PacketHashtable::buildExpHelperTable()
 		if (!typeAvailable(hfi.type)) {
 			THROWEXCEPTION("Type %s is not contained in raw packet. Please remove it from PacketAggregator rule.", hfi.type.toString().c_str());
 		}
-		if (!isToBeAggregated(hfi.type)) continue;
+		if (fieldModifier[i] != Rule::Field::AGGREGATE) continue;
 		ExpFieldData* efd = &expHelperTable.revAggFields[expHelperTable.noRevAggFields++];
 		fillExpFieldData(efd, &dataTemplate->fieldInfo[i], fieldModifier[i], expHelperTable.noRevAggFields-1);
 		hfi.type.enterprise |= IPFIX_PEN_reverse;
@@ -1259,7 +1259,7 @@ void PacketHashtable::aggregateField(const ExpFieldData* efd, HashtableBucket* h
 
 						// no other types needed, as this is only for raw field input
 					default:
-						DPRINTF_INFO("non-aggregatable type: %s", efd->typeId.toString().c_str());
+						DPRINTF_INFO("default aggregation for type: %s", efd->typeId.toString().c_str());
 						break;
 				}
 				break;
@@ -1333,7 +1333,7 @@ void PacketHashtable::aggregateField(const ExpFieldData* efd, HashtableBucket* h
 						break;
 
 					default:
-						DPRINTF_INFO("non-aggregatable type: %s", efd->typeId.toString().c_str());
+						DPRINTF_INFO("default aggregation for type: %s", efd->typeId.toString().c_str());
 						break;
 				}
 				break;
@@ -1358,7 +1358,7 @@ void PacketHashtable::aggregateField(const ExpFieldData* efd, HashtableBucket* h
 						break;
 
 					default:
-						DPRINTF_INFO("non-aggregatable type: %s", efd->typeId.toString().c_str());
+						DPRINTF_INFO("default aggregation for type: %s", efd->typeId.toString().c_str());
 						break;
 				}
 				break;
@@ -1383,12 +1383,12 @@ void PacketHashtable::aggregateField(const ExpFieldData* efd, HashtableBucket* h
 						break;
 
 					default:
-						DPRINTF_INFO("non-aggregatable type: %s", efd->typeId.toString().c_str());
+						DPRINTF_INFO("default aggregation for type: %s", efd->typeId.toString().c_str());
 						break;
 				}
 				break;
 			default:
-				DPRINTF_INFO("non-aggregatable type: %s", efd->typeId.toString().c_str());
+				DPRINTF_INFO("default aggregation for type: %s", efd->typeId.toString().c_str());
 				break;
 		}
 	}
